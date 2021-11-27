@@ -97,9 +97,13 @@ Los distintos notebooks forman un pipeline en el cuál cada uno utiliza los dato
    - Archivos de entrada: *docs/reddit_data_<método>.csv*.
    - Archivos de salida:
      - *docs/reddit_data_hate_speech.csv* - CSV que toma  **TODO**
+     - Archivos de test: *docs/test/reddit_data_hate_speech_pos* y *docs/test/reddit_data_hate_speech_neg.csv*: datasets con ejemplos predichos como de odio (-o no-) por parte del modelo, respectivamente.
+**TODO pasar aquí la parte de modelos de reddit, para que pueda hacer con los tres modelos, y el dataset de salida también incluya al modelo**
+
 6. Análisis de resultados.
    - Archivos de entrada: *docs/reddit_data_hate_speech.csv*
    - Archivos de salida: N/A.
+   - Archivos de test: **TODO**.
 
 
 # Informe del proyecto
@@ -110,6 +114,9 @@ Se muestra a continuación el informe del proyecto, en donde se especifican la m
 
 ### Motivación
 
+Los discursos de odio son un problema [TODO]
+
+
 El presente trabajo se enfoca en la detección de discursos de odio en la comunidad seleccionada. Los objetivos del mismo son: **1)** detección de comentarios con discurso de odio, y **2)** caracterizar ese discurso de odio en sub-lenguajes de odio.
 
 El presente trabajo se basa en la siguiente hipótesis: "en una comunidad en donde existen comentarios con discurso de odio, es posible combinar técnicas de aprendizaje supervisado y no supervisado, para realizar la detección de discursos de odio a partir de modelos que se especialicen en distintos grupos de comentarios".
@@ -117,6 +124,7 @@ El presente trabajo se basa en la siguiente hipótesis: "en una comunidad en don
 #### ¿Por qué reddit argentina?
 
 Quisimos hacer nuestro trabajo enfocado en una comunidad Argentina fuera de las redes sociales más comunes (dado que son aquellas más comúnmente abordadas), pero que a la vez tenga el tamaño suficiente como para tener muchos usuarios e interacciones. En ese sentido, r/argentina fue la opción más prominente, ya que la comunidad es muy activa y cuenta con cerca de 350.000 subscriptores (a Noviembre de 2021).
+
 ### Discurso de odio
 ### r/argentina
 
@@ -135,7 +143,18 @@ Quisimos hacer nuestro trabajo enfocado en una comunidad Argentina fuera de las 
 
 ## Conclusiones
 
+Como conclusiones del trabajo:
+
+- Es posible **TODO**.
+- Es difícil separar discurso de odio de comentarios ofensivos **TODO**.
+- No obstante! **TODO**
+
 ## Trabajos futuros
+
+## Backlog
+
+**TODO**
+
 ## Fuentes consultadas para el trabajo
 
 
