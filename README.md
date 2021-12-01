@@ -12,27 +12,31 @@ Caracterización de discurso de odio en r/argentina
   - [Flujo de datos generados](#flujo-de-datos-generados)
 - [Informe del proyecto](#informe-del-proyecto)
   - [Introducción](#introducción)
-    - [Motivación](#motivación)
-    - [Discurso de odio](#discurso-de-odio)
-    - [r/argentina](#rargentina)
+    - [Discursos de odio](#discursos-de-odio)
+    - [Motivación del trabajo](#motivación-del-trabajo)
+    - [reddit](#reddit)
       - [¿Por qué r/argentina?](#por-qué-rargentina)
-      - [Estructura general de un post](#estructura-general-de-un-post)
   - [1. Obtención de datos](#1-obtención-de-datos)
   - [2. Pre-procesamiento](#2-pre-procesamiento)
   - [3. Embeddings](#3-embeddings)
     - [3a. Embeddings con LDA](#3a-embeddings-con-lda)
     - [3b. Embeddings con Word2Vec](#3b-embeddings-con-word2vec)
     - [3c. Embeddings con FastText](#3c-embeddings-con-fasttext)
-  - [4. Entrenamiento de detector de odio](#4-entrenamiento-de-detector-de-odio)
+  - [4. Entrenamiento del detector de odio](#4-entrenamiento-del-detector-de-odio)
   - [5. Aplicación del modelo a los comentarios de reddit](#5-aplicación-del-modelo-a-los-comentarios-de-reddit)
   - [6. Análisis de resultados](#6-análisis-de-resultados)
   - [Conclusiones](#conclusiones)
-  - [Trabajos futuros](#trabajos-futuros)
+  - [Trabajo futuro](#trabajo-futuro)
+    - [General](#general)
+    - [Clustering](#clustering)
+    - [Modelo](#modelo)
+    - [Información de contexto](#información-de-contexto)
   - [Fuentes consultadas para el trabajo](#fuentes-consultadas-para-el-trabajo)
-    - [Discursos de odio](#discursos-de-odio)
+    - [Discursos de odio](#discursos-de-odio-1)
     - [reddit API](#reddit-api)
     - [Procesamiento de lenguaje natural](#procesamiento-de-lenguaje-natural)
-    - [Clustering](#clustering)
+    - [Clustering](#clustering-1)
+    - [Competencias](#competencias)
     - [Trabajos relacionados](#trabajos-relacionados)
 
 
@@ -43,7 +47,7 @@ El presente repo contiene el código correspondiente al proyecto final de la mat
 
 Objetivo del proyecto: Caracterizar discursos de odio dentro de la comunidad de [reddit Argentina](https://reddit.com/r/argentina). Esto es, detectarlos y encontrar sub-lenguajes de odio en los mismos.
 
-Para realizar esto, se llevó a cabo un proceso consistente en 5 etapas, como se muestra en la siguiente figura:
+Para realizar esto, se llevó a cabo un proceso consistente en 6 etapas, como se muestra en la siguiente figura:
 
 ![pipeline_reddit](/misc/workflow.drawio.png)
 
@@ -57,7 +61,7 @@ Cada etapa tiene su correspondiente notebook:
 3. Aplicación de embeddings y categorización en clústers (notebook [LDA](https://github.com/PerseoSoft/redditHateSpeech/blob/main/src/3a_pipeline_lda.ipynb) [Word2Vec](https://github.com/PerseoSoft/redditHateSpeech/blob/main/src/3b_pipeline_embedding_word2vec.ipynb) [FastText](https://github.com/PerseoSoft/redditHateSpeech/blob/main/src/3c_pipeline_embedding_fasttext.ipynb)).
 
 4. Entrenamiento de un modelo de detección de odio y extracción de palabras de odio en cada dataset ([notebook](https://github.com/PerseoSoft/redditHateSpeech/blob/main/src/4_detect_hate_speech.ipynb)).
-Para realizar el entrenamiento de los modelos, es necesario contar con los datasets respectivos de cada competencia (Hateval, DETOXIS, MeOffendMex) que se desee entrenar.
+Para realizar el entrenamiento de los modelos, es necesario contar con los datasets respectivos de tres competencias (Hateval, DETOXIS, MeOffendMex) que se desee entrenar.
 
 5. Uso del modelo para predecir los comentarios recolectados ([notebook](https://github.com/PerseoSoft/redditHateSpeech/blob/main/src/5_pipeline_hate_speech.ipynb)).
 
@@ -139,21 +143,15 @@ Se muestra a continuación el informe del proyecto, en donde se especifican la m
 
 ## Introducción
 
-### Motivación
+### Discursos de odio
 
-El presente trabajo se enfoca en la detección de discursos de odio en la comunidad seleccionada. Los objetivos del mismo son: **1)** detección de comentarios con discurso de odio, y **2)** caracterizar ese discurso de odio en sub-lenguajes de odio.
+El discurso de odio es un problema muy relevante en la actualidad, dado su rol en la discriminación de grupos y minorías sociales, y [es considerado como precursor de crímenes de odio, que incluyen al genocido](). **TODO agregar cita**
 
-El presente trabajo se basa en la siguiente hipótesis: "en una comunidad en donde existen comentarios con discurso de odio, es posible combinar técnicas de aprendizaje supervisado y no supervisado, para realizar la detección de discursos de odio a partir de modelos que se especialicen en distintos grupos de comentarios".
+Hay varias posturas sobre lo que es el discurso de odio, en general se coincide en que es un discurso que:
 
-
-### Discurso de odio
-
-Hay varias posturas sobre lo que es discurso de odio, en general se coincide en que es un discurso que:
-
-1. Apunta a un grupo o individuo, basado en algún aspecto como su orientación sexual, religión, nacionalidad, etc.
-2. Busca humillar, discriminar o propagar el odio/hostilidad hacia ese grupo.
+1. Apunta contra un grupo o individuo, basado en algún aspecto como su orientación sexual, religión, nacionalidad, etc.
+2. Busca humillar, discriminar o propagar el odio/hostilidad/intolerancia hacia ese grupo.
 3. Tiene una intención deliberada.
-
 
 Su manifestación en Internet, además:
 
@@ -161,23 +159,44 @@ Su manifestación en Internet, además:
 2. Permite propagar el discurso de odio con velocidad.
 3. Permite que el discurso se mantenga y comparta con facilidad.
 4. Facilita la generación de cámaras de eco.
-5. Al estar en servidores privados, permite que ciertas empresas intenten eludir su control, y usarlos para mantener sus usuarios interactuando con el servicio.
+5. Al estar en servidores privados, la aplicación de la ley no siempre es rápida, lo que hace que ciertos actores intenten eludir su control, utilizando el discurso de odio en beneficio de su agenda.
 
-### r/argentina
+A raíz de la gravedad que significa el problema, muchas plataformas sociales han reconocido el problema, y han optado por prohibirlo en sus términos de uso, pudiendo sus usuarios reportar comentarios que potencialmente contengan este tipo de discursos. **TODO citar**
+No obstante, el problema de la propagación de odio permanece...
+ **TODO citar**
 
-[Reddit](https://www.reddit.com/) es una red social de “comunidades” creadas por usuarios. En este proyecto, nos centramos en [r/argentina](https://www.reddit.com/r/argentina/).
 
-#### ¿Por qué r/argentina?
+### Motivación del trabajo
 
-Quisimos hacer nuestro trabajo enfocado en una comunidad Argentina fuera de las redes sociales más comunes (dado que son aquellas más comúnmente abordadas), pero que a la vez tenga el tamaño suficiente como para tener muchos usuarios e interacciones. En ese sentido, r/argentina fue la opción más prominente, ya que la comunidad es muy activa y cuenta con cerca de 350.000 subscriptores (a Noviembre de 2021).
+Considerando las consecuencias que puede traer aparejados los discursos de odio, este trabajo se enfoca en la detección de discursos de odio en una comunidad particular de reddit. Los objetivos del mismo son: **1)** detección de comentarios con discurso de odio, y **2)** caracterizar ese discurso de odio en sub-lenguajes de odio.
 
-#### Estructura general de un post
+El presente trabajo se basa en la siguiente hipótesis: "*en una comunidad en donde existen comentarios con discurso de odio, es beneficioso combinar técnicas de aprendizaje supervisado y no supervisado, para realizar la detección de subcomunidades de odio, a partir de modelos que se especializan en distintos grupos de comentarios*".
+
+### reddit
+
+[Reddit](https://www.reddit.com/) es una red social de “comunidades” creadas y moderadas por sus propios usuarios. En cada comunidad sus miembros hacen posts, y cada post puede ser comentado generando debate. Su aspecto distintivo es que cada post o comentario recibe votos, con el objetivo de que aquellos posts o comentarios que más aportan aparezcan encima de los que no. También se pueden premiar a aquellos destacados. 
 
 En la siguiente imagen podemos ver la estructura general de un post en reddit:
 
 ![](misc/reddit.png)
 
-En cada comunidad sus miembros hacen posts, y cada post puede ser comentado generando debate. Su aspecto distintivo es que cada post o comentario recibe votos, con el objetivo de que aquellos posts o comentarios que más aportan aparezcan encima de los que no. También se pueden premiar a aquellos destacados.
+En este proyecto, nos centramos en [r/argentina](https://www.reddit.com/r/argentina/), que es una comunidad dedicada a charlar temas referentes a Argentina, que van desde comidas, costumbres, chistes, deporte, política y economía.
+
+#### ¿Por qué r/argentina?
+
+Quisimos hacer nuestro trabajo enfocado en una comunidad Argentina fuera de las redes sociales más comunes (dado que son aquellas más frecuentenemente estudiadas), pero que a la vez tenga el tamaño suficiente como para tener muchos usuarios e interacciones. En ese sentido, r/argentina fue la opción más prominente, ya que la comunidad es muy activa y cuenta con cerca de 350.000 subscriptores (a Noviembre de 2021).
+
+De acuerdo a las reglas de r/argentina (en concreto, la Regla 3), el discurso de odio está prohibido:
+
+>**3. No se permite el racismo, xenofobia u otras expresiones de odio**
+>
+> No se permite el racismo, xenofobia, ni ninguna otra forma de odio (incluyendo sexismo, homofobia, transfobia, clase social, etc), ni ningún tipo de discriminación o expresiones de odio o lenguaje deshumanizante en general; esto incluye comentarios incitando violencia. Esto también se extiende a grupos. Hacer referencia a enfermedades o discapacidades para insultar a otros no será tolerado. Usuarios que incurran en estas faltas podrán ser baneados permanentemente sin apelación.
+
+No obstante, al ver mensajes de la comunidad para llevar adelante este trabajo, hemos detectado en ciertos casos comentarios con discursos de odio, ej.: manifestando aporofobia, gordofobia, o agresiones contra mujeres, entre otros.
+
+Dado este , la motivación de nuestro trabajo es la de buscar comentarios o mensajes 
+
+
 
 ## 1. Obtención de datos
 
@@ -283,7 +302,7 @@ El *cluster* número 113, **ley - etiquetado - votar**, incluye comentarios sobr
 7. "y ahora Lipovetzky reconoce lo de la ley de alquileres"
 
 
-## 4. Entrenamiento de detector de odio
+## 4. Entrenamiento del detector de odio
 
 [Notebook](/src/4_detect_hate_speech.ipynb)
 
@@ -291,9 +310,11 @@ En paralelo a la búsqueda de clústers que agrupen los distintos tópicos, se b
 
 **TODO poner las etiquetas que se decidieron usar en cada dataset**
 
-1. HatEval: dataset con cerca de 7000 tweets de usuarios de España, que potencialmente manifiestan discurso de odio contra mujeres o inmigrantes.
-2. DETOXIS: dataset con cerca de 3500 comentarios de sitios de noticias/foros españoles, que posiblemente contienen toxicidad.
-3. MeOffendMex: dataset con alrededor de 5000 tweets de usuarios de México, que posiblemente contienen mensajes ofensivos.
+1. HatEval: dataset con cerca de 7000 tweets de usuarios de España, que potencialmente manifiestan discurso de odio contra mujeres o inmigrantes. Este dataset es el más parecido a la tarea que queremos resolver, ya que tiene datos etiquetados que marcan directamente si se trata o no de un tweet con discurso de odio, sea contra un individuo o un grupo. Ejemplo de comentario etiquetado como discurso de odio: **TODO** Ejemplo de comentario sin etiqueta de discurso de odio: **TODO**
+
+2. DETOXIS: dataset con cerca de 3500 comentarios de sitios de noticias/foros españoles, que posiblemente contienen toxicidad. Si bien un mensaje con toxicidad no es necesariamente discurso de odio (y un mensaje con discurso de odio puede tener toxicidad o no), suele estar asociado al mismo. Ejemplo de comentario tóxico sin discurso de odio: **TODO** Ejemplo de comentario tóxico con discurso de odio: **TODO**
+
+3. MeOffendMex: dataset con alrededor de 5000 tweets de usuarios de México, que posiblemente contienen mensajes ofensivos. Al igual que la toxicidad, un mensaje ofensivo no necesariamente está manifestando odio, pero suelen estar asociados. Ejemplo de comentario ofensivo con discurso de odio: **TODO** Ejemplo de comentario ofensivo sin discurso de odio: **TODO**
 
 En cada uno de los mismos, se entrenaron tres modelos de aprendizaje supervisado: *[regresión logística](https://en.wikipedia.org/wiki/Logistic_regression)*, *[naive Bayes](https://en.wikipedia.org/wiki/Naive_Bayes_classifier)* y *[random forest](https://en.wikipedia.org/wiki/Random_forests)*, todos provistos por la librería [scikit-learn](https://scikit-learn.org).
 
@@ -303,9 +324,14 @@ Para realizar el entrenamiento, a cada comentario se le aplicó el vectorizador 
 
 $$$$
 
+donde los predictores representan los unigramas, bigramas y trigramas de cada comentario.
+
 Tal matriz, junto con las correspondientes etiquetas de cada comentario, constituyeron la entrada de cada uno de los modelos. Tales modelos funcionaron bastante bien con sus configuraciones básicas, **TODO**, mostrando matrices de confusión sólidas. Especialmente, los que mejor performaron fueron naive Bayes y random forest.
 
-Una vez entrenados, se extrajeron las palabras de odio de naive Bayes y random forest, de acuerdo al criterio **TODO**.
+Una vez entrenados, se extrajeron las palabras que posiblemente manifiestan odio en cada dataset, en base al entrenamiento de los modelos de naive Bayes y random forest, de acuerdo a su aporte a la clasificación de las palabras **TODO**.
+
+**TODO agregar matrices de confusión, y comentar un poco los criterios tomados, especialmente respecto a los falsos positivos**
+
 
 La salida del detector de odio se puede ver en el archivo **TODO**.
 
@@ -314,19 +340,47 @@ La salida del detector de odio se puede ver en el archivo **TODO**.
 
 [Notebook](/src/5_pipeline_hate_speech.ipynb)
 
-Una vez teniendo los modelos entrenados, el siguiente paso fue aplicarlos en .
+Una vez teniendo los modelos entrenados, el siguiente paso consistió en aplicarlos en los comentarios recolectados de reddit.
 
+Al aplicar los modelos entrenados en los comentarios, lo primero que se observó es la cantidad de falsos positivos detectados como comentario de odio.
+
+En particular, el dataset cuyo mejor rendimiento observamos detectando comentarios en reddit fue MeOffendEs **TODO**. A partir de esto, se guardaron los resultados y **TODO**.
+
+Los modelos entrenados detectaron .
 
 
 ## 6. Análisis de resultados
 
 [Notebook](/src/6_pipeline_result.ipynb)
 
+Estando generados los clusters, los modelos entrenados, las palabras de odio y los resultados, se procede a hacer un análisis de los resultados obtenidos.
+
 
 ## Conclusiones
 
+- .
 
-## Trabajos futuros
+## Trabajo futuro
+
+### General
+
+- Tomando el enfoque de este trabajo como base, buscar caracterizar el discurso de odio en otras comunidades de foros populares argentinos, tales como [Taringa!](https://www.taringa.net/), [r/republicaargentina](https://www.reddit.com/r/RepublicaArgentina/), [r/dankargentina](https://www.reddit.com/r/dankargentina/), o comunidades argentinas en Twitter.
+
+### Clustering
+
+- Usar coeficientes de silueta para determinar el número óptimo de clústers.
+
+### Modelo
+
+- Realizar un etiquetado en diferentes comentarios de r/argentina que pertenezcan a ciertos clusters que potencialmente contengan odio, y entrenar un modelo a partir de ellos, para poder mejorar la detección de comentarios de odio.
+- Realizar optimización de híper-parámetros.
+
+### Información de contexto
+
+- Incorporar info de la comunidad, para ver qué tan de acuerdo estuvieron los usuarios con los comentarios.
+- Incorporar el contexto del comentario padre, especialmente si se lo está respondiendo. Esto es dado que un mensaje puede no ser un mensaje de odio por sí sólo, pero sí lo es al observar el comentario al que se contesta.
+- Considerar dejar de alguna forma los emojis, ya que también pueden representar una forma de manifestar odio.
+- Incorporar más los tags al análisis, como por ejemplo: “\[Serio\]”.
 
 
 ## Fuentes consultadas para el trabajo
@@ -335,6 +389,7 @@ Una vez teniendo los modelos entrenados, el siguiente paso fue aplicarlos en .
 
 - https://en.wikipedia.org/wiki/Hate_speech
 - https://www.rightsforpeace.org/hate-speech
+- https://www.un.org/en/genocideprevention/hate-speech-strategy.shtml
 - https://fsi.stanford.edu/news/reddit-hate-speech
 - https://variety.com/2020/digital/news/reddit-bans-hate-speech-groups-removes-2000-subreddits-donald-trump-1234692898
 - https://www.reddithelp.com/hc/en-us/articles/360045715951-Promoting-Hate-Based-on-Identity-or-Vulnerability
@@ -365,6 +420,14 @@ Una vez teniendo los modelos entrenados, el siguiente paso fue aplicarlos en .
 - https://medium.com/@rohithramesh1991/unsupervised-text-clustering-using-natural-language-processing-nlp-1a8bc18b048d
 - https://xplordat.com/2018/12/14/want-to-cluster-text-try-custom-word-embeddings/
 - https://towardsdatascience.com/clustering-with-more-than-two-features-try-this-to-explain-your-findings-b053007d680a
+
+
+### Competencias
+
+- HatEval (SemEval 2019): https://competitions.codalab.org/competitions/19935
+- DETOXIS (IberLEF 2021): https://detoxisiberlef.wixsite.com/website/corpus
+- MeOffendEs (IberLEF 2021): https://competitions.codalab.org/competitions/28679
+
 
 ### Trabajos relacionados
 
