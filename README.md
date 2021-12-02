@@ -21,6 +21,10 @@ Caracterización de discurso de odio en r/argentina
     - [2. Pre-procesamiento](#2-pre-procesamiento)
     - [3. Embeddings](#3-embeddings)
       - [3a. Embeddings con LDA](#3a-embeddings-con-lda)
+  - [1. Obtención de datos](#1-obtención-de-datos)
+  - [2. Pre-procesamiento](#2-pre-procesamiento)
+  - [3. Embeddings](#3-embeddings)
+    - [3a. Embeddings con LDA](#3a-embeddings-con-lda)
     - [3b. Embeddings con Word2Vec](#3b-embeddings-con-word2vec)
     - [3c. Embeddings con FastText](#3c-embeddings-con-fasttext)
   - [4. Entrenamiento del detector de odio](#4-entrenamiento-del-detector-de-odio)
@@ -181,6 +185,7 @@ En la siguiente imagen podemos ver la estructura general de un post en reddit:
 
 ![](misc/reddit.png)
 
+
 En este proyecto, nos centramos en [r/argentina](https://www.reddit.com/r/argentina/), que es una comunidad dedicada a charlar temas referentes a Argentina, que incluyen comidas, costumbres, chistes, deporte, política,  economía, consejos, entre otros.
 
 #### ¿Por qué r/argentina?
@@ -193,6 +198,7 @@ Respecto a su posición frente a discursos de odio, en las reglas de r/argentina
 >
 > No se permite el racismo, xenofobia, ni ninguna otra forma de odio (incluyendo sexismo, homofobia, transfobia, clase social, etc), ni ningún tipo de discriminación o expresiones de odio o lenguaje deshumanizante en general; esto incluye comentarios incitando violencia. Esto también se extiende a grupos. Hacer referencia a enfermedades o discapacidades para insultar a otros no será tolerado. Usuarios que incurran en estas faltas podrán ser baneados permanentemente sin apelación.
 
+
 No obstante, al elaborar este trabajo, hemos detectado casos de comentarios con discursos de odio, ej.: manifestando aporofobia, gordofobia, o agresiones contra mujeres, entre otros.
 
 Dada esta situación, la motivación de nuestro trabajo es la de poder detectar automáticamente este tipo de comentarios, pudiendo caracterizar los mismos en sub-comunidades.
@@ -201,6 +207,7 @@ Dada esta situación, la motivación de nuestro trabajo es la de poder detectar 
 ## Paso a paso del proyecto
 
 A continuación, vemos el paso a paso de las distintas etapas de este proyecto, partiendo de los datos iniciales, cómo los mismos fueron procesados y usados para entrenar distintos algoritmos, los resultados obtenidos tras ello, y finalmente las conclusiones y trabajo futuro.
+
 
 ### 1. Obtención de los datos
 
@@ -309,6 +316,7 @@ El *cluster* número 113, **ley - etiquetado - votar**, incluye comentarios sobr
 ## 4. Entrenamiento del detector de odio
 
 [Notebook](/src/4_detect_hate_speech.ipynb)
+
 
 En paralelo a la búsqueda de clústers que agrupan los distintos tópicos, se buscó también, a partir de los datos [pre-procesados anteriormente](#2-pre-procesamiento) el detectar automáticamente comentarios de odio, para poder combinarlos con los [tópicos encontrados](#3-embeddings). Para ello, se recurrió a conjuntos de datos anotados y en castellano, que hayan utilizados para tareas similares. En particular, se optó por los siguientes tres:
 
