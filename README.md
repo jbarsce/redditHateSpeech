@@ -120,8 +120,8 @@ Se muestra a continuación el informe producto de este proyecto, en donde se esp
     - [2. Pre-procesamiento](#2-pre-procesamiento)
     - [3. Representación de tópicos mediante *embeddings*](#3-representación-de-tópicos-mediante-embeddings)
       - [3a. *Embeddings* con LDA](#3a-embeddings-con-lda)
-    - [3b. *Embeddings* con Word2vec](#3b-embeddings-con-word2vec)
-    - [3c. *Embeddings* con fastText](#3c-embeddings-con-fasttext)
+      - [3b. *Embeddings* con Word2vec](#3b-embeddings-con-word2vec)
+      - [3c. *Embeddings* con fastText](#3c-embeddings-con-fasttext)
   - [4. Entrenamiento de detectores de odio](#4-entrenamiento-de-detectores-de-odio)
   - [5. Aplicación del modelo a los comentarios de reddit](#5-aplicación-del-modelo-a-los-comentarios-de-reddit)
   - [6. Análisis de resultados](#6-análisis-de-resultados)
@@ -208,6 +208,8 @@ Dada esta situación, la motivación de nuestro trabajo es la de poder detectar 
 
 Se describe a continuación, el paso a paso de las distintas etapas de este proyecto, partiendo de los datos iniciales, cómo los mismos fueron procesados y usados para entrenar distintos algoritmos, los resultados obtenidos tras ello, y finalmente las conclusiones y trabajo futuro.
 
+Importante: el informe mostrado a continuación está basado en el commit https://github.com/PerseoSoft/redditHateSpeech/commit/41e5377e84580893a73185c0c0ecf2d11741df9b, que es el que debe usarse para reproducir los resultados originales. Es posible que al ejecutar el notebook en versiones posteriores, se obtengan salidas distintas por parte de los modelos de aprendizaje supervisado y no supervisado. Por motivos de consistencia con el informe, se preservan en las nuevas versiones de los notebooks las salidas originales.
+
 
 ### 1. Obtención de los datos
 
@@ -278,7 +280,7 @@ El tópico número 91, **piedra - etiqueta - pan - mira**, incluye comentarios s
 5. "Alta banfest se van a mandar los mods con este thread. Despedite de tu cuenta, maquinola, denunciado"
 
 
-### 3b. *Embeddings* con Word2vec
+#### 3b. *Embeddings* con Word2vec
 
 [Notebook](/src/3b_pipeline_embedding_word2vec.ipynb)
 
@@ -308,7 +310,7 @@ En particular, el *cluster* número 94, **ley - etiquetado - proyecto**, es el q
 5. "Pero hay leyes contra la violencia de genero! Como paso esto!!!1!?"
 6. "No existe tal cosa en Argentina. Existe el Estado de Sitio, pero no se asemeja para nada a una ley marcial.. El concepto de ley marcial como tal, desapareció en el 94 con la nueva Constitución."
 
-### 3c. *Embeddings* con fastText
+#### 3c. *Embeddings* con fastText
 
 [Notebook](/src/3c_pipeline_embedding_fasttext.ipynb)
 
